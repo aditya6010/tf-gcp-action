@@ -55,48 +55,49 @@ jobs:
             
             - name: Terraform Plan
               run: |
-                terraform plan -out "tf_plan" -var-file="${{inputs.workspace-env}}.tfvars"
+                terraform apply  -var-file="${{inputs.workspace-env}}.tfvars" -auto-approve
             
-            - name: Upload TF Plan
-              uses: actions/upload-artifact@v2
-              with:
-                name: tf_plan
-                path: ./tf_plan
-                if-no-files-found: error
-                retention-days: 1
+            # - name: Upload TF Plan
+            #   uses: actions/upload-artifact@v2
+            #   with:
+            #     name: tf_plan
+            #     path: ./tf_plan
+            #     if-no-files-found: error
+            #     retention-days: 1
     
-    terraform_apply:
-        name: 'Terraform Apply'
-        runs-on: ubuntu-latest
-        needs: terraform_plan
-        environment:
-            name: ${{inputs.workspace-env}}
+    # terraform_apply:
+    #     name: 'Terraform Apply'
+    #     runs-on: ubuntu-latest
+    #     if: inputs.apply_change == "true"
+    #     needs: terraform_plan
+    #     environment:
+    #         name: ${{inputs.workspace-env}}
         
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v3
+    #     steps:
+    #         - name: Checkout
+    #           uses: actions/checkout@v3
             
-            - id: 'auth'
-              uses: 'google-github-actions/auth@v1'
-              with:
-                credentials_json: '${{ secrets.GCP_SA_KEY }}'
+    #         - id: 'auth'
+    #           uses: 'google-github-actions/auth@v1'
+    #           with:
+    #             credentials_json: '${{ secrets.GCP_SA_KEY }}'
             
-            - name: 'Set up Cloud SDK'
-              uses: 'google-github-actions/setup-gcloud@v1'
+    #         - name: 'Set up Cloud SDK'
+    #           uses: 'google-github-actions/setup-gcloud@v1'
             
-            - name: Download TF Plan
-              uses: actions/download-artifact@v2
-              with:
-                name: tf_plan
-                path: ./
+    #         - name: Download TF Plan
+    #           uses: actions/download-artifact@v2
+    #           with:
+    #             name: tf_plan
+    #             path: ./
             
-            # Provision resources via Terraform        
-            - name: Terraform Apply
-              run: |
-                chmod +x "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
-                "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
-                terraform show "tf_plan"
-                terraform apply "tf_plan"
+    #         # Provision resources via Terraform        
+    #         - name: Terraform Apply
+    #           run: |
+    #             chmod +x "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
+    #             "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
+    #             terraform show "tf_plan"
+    #             terraform apply "tf_plan"
 
 
                  

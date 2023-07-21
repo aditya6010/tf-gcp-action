@@ -9,8 +9,8 @@
 ###############################################
 
 provider "google" {
-  project     = var.project_id
-  region      = var.region
-  zone        = "us-east1-a"
+  project = var.project_id
+  region  = var.region
+  zone    = "us-east1-a"
   # credentials = "C:/HashiCorp/ce-tf-capstone-654c4da04894.json"
 }

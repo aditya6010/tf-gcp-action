@@ -33,6 +33,6 @@ variable "env" {
 #   description = "Service account to attach to the instance. See https://www.terraform.io/docs/providers/google/r/compute_instance_template#service_account."
 # }
 variable "sa_email" {
-  type = string
+  type        = string
   description = "Email for service account"
 }

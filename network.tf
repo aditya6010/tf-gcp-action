@@ -8,14 +8,14 @@ module "capstone-vpc" {
   name                    = "terraform-VPC"
   auto_create_subnetworks = false
   project_id              = var.project_id
-  environment             =  var.env
+  environment             = var.env
 }
 
 module "capstone-subnets" {
   source       = "./modules/subnets"
-  project_id   =      var.project_id
+  project_id   = var.project_id
   network_name = module.capstone-vpc.network_name
-  subnets      = [
+  subnets = [
     {
       subnet_name   = "subnet-01"
       subnet_ip     = "10.10.10.0/24"
@@ -27,7 +27,7 @@ module "capstone-subnets" {
       subnet_region         = var.region
       subnet_private_access = "true"
     }
-    ]
+  ]
 }
 
 # module "route" {
@@ -48,8 +48,8 @@ module "capstone-subnets" {
 
 
 resource "google_compute_firewall" "ssh" {
-  name = "allow-ssh"
-  depends_on = [ module.capstone-vpc, module.capstone-subnets ]
+  name       = "allow-ssh"
+  depends_on = [module.capstone-vpc, module.capstone-subnets]
   allow {
     ports    = ["22"]
     protocol = "tcp"
@@ -62,8 +62,8 @@ resource "google_compute_firewall" "ssh" {
 }
 
 resource "google_compute_firewall" "http" {
-  name = "allow-http"
-  depends_on = [ module.capstone-vpc, module.capstone-subnets ]
+  name       = "allow-http"
+  depends_on = [module.capstone-vpc, module.capstone-subnets]
   allow {
     ports    = ["80"]
     protocol = "tcp"

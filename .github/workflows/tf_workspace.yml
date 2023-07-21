@@ -1,0 +1,53 @@
+name:  TF Workspace Create
+on:
+    workflow_dispatch:
+        inputs:
+            workspace-env:
+                description: "workspace to be create"
+                type: choice
+                options:
+                    - dev
+                    - qa
+                    - prod
+                default: dev
+
+
+jobs:
+    terraform_plan:
+        name: 'Terraform Plan'
+        runs-on: ubuntu-latest
+        
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+            
+            - name: Setup GCP Service Account
+              uses: google-github-actions/setup-gcloud@v1
+              with:
+                version: 'latest'
+                service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+                service_account_key: ${{ secrets.GCP_SA_KEY }}
+                export_default_credentials: true
+            # Generates an execution plan for Terraform
+            - name: Terraform Plan
+              continue-on-error: true
+              run: |
+                    env_name = ${{ inputs.workspace-env }}
+                    chmod +x "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
+                    "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
+
+                    chmod +x "${GITHUB_WORKSPACE}/.github/workflows/tf_fmt.sh"
+                    "${GITHUB_WORKSPACE}/.github/workflows/tf_fmt.sh"
+
+                    chmod +x "${GITHUB_WORKSPACE}/.github/workflows/tf_plan_check.sh"
+                    "${GITHUB_WORKSPACE}/.github/workflows/tf_plan_check.sh"
+                    
+                    terraform workspace new ${{inputs.workspace-env }}
+              shell: bash
+            
+
+
+
+
+
+

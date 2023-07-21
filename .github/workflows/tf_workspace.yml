@@ -32,7 +32,7 @@ jobs:
             - name: Terraform Plan
               continue-on-error: true
               run: |
-                    env_name = ${{ inputs.workspace-env }}
+                    env_name=${{ inputs.workspace-env }}
                     chmod +x "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
                     "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
 

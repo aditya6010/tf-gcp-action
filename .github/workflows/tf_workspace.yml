@@ -13,7 +13,7 @@ on:
 
 
 jobs:
-    terraform_init:
+    terraform_automate:
         name: 'Terraform Plan'
         runs-on: ubuntu-latest
         
@@ -47,6 +47,17 @@ jobs:
                     terraform workspace select -or-create ${{inputs.workspace-env }}
               shell: bash
             
+            - name: Terraform Plan
+              run: |
+                terraform plan -out "tf_plan" -var-file="${{inputs.workspace-env}}.tfvars"
+            
+            - name: Upload TF Plan
+              uses: actions/upload-artifact@v2
+              with:
+                name: tf_plan
+                path: ./tf_plan
+                if-no-files-found: error
+                retention-days: 1
             
                  
             

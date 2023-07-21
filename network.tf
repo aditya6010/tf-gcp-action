@@ -17,9 +17,10 @@ module "capstone-subnets" {
   network_name = module.capstone-vpc.network_name
   subnets = [
     {
-      subnet_name   = "subnet-01"
-      subnet_ip     = "10.10.10.0/24"
-      subnet_region = var.region
+      subnet_name           = "subnet-01"
+      subnet_ip             = "10.10.10.0/24"
+      subnet_region         = var.region
+      subnet_private_access = "true"
     },
     {
       subnet_name           = "subnet-02"

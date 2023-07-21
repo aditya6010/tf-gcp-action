@@ -5,6 +5,7 @@ on:
             workspace-env:
                 description: "workspace to be create"
                 type: choice
+                required: true
                 options:
                     - dev
                     - qa
@@ -12,13 +13,13 @@ on:
                 default: dev
             apply_change:
                 description: "Select true if want to apply the change only"
-                type: bool
+                type: boolean
                 default: false
-                    -
+                
 
 
 jobs:
-    terraform_automate:
+    terraform_plan:
         name: 'Terraform Plan'
         runs-on: ubuntu-latest
         
@@ -63,7 +64,41 @@ jobs:
                 path: ./tf_plan
                 if-no-files-found: error
                 retention-days: 1
+    
+    terraform_apply:
+        name: 'Terraform Apply'
+        runs-on: ubuntu-latest
+        needs: terraform_plan
+        environment:
+            name: ${{inputs.workspace-env}}
+        
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
             
+            - id: 'auth'
+              uses: 'google-github-actions/auth@v1'
+              with:
+                credentials_json: '${{ secrets.GCP_SA_KEY }}'
+            
+            - name: 'Set up Cloud SDK'
+              uses: 'google-github-actions/setup-gcloud@v1'
+            
+            - name: Download TF Plan
+              uses: actions/download-artifact@v2
+              with:
+                name: tf_plan
+                path: ./
+            
+            # Provision resources via Terraform        
+            - name: Terraform Apply
+              run: |
+                chmod +x "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
+                "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
+                terraform show "tf_plan"
+                terraform apply "tf_plan"
+
+
                  
             
 

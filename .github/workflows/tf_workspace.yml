@@ -1,4 +1,4 @@
-name:  TF Workspace Create
+name:  TF Automation
 on:
     workflow_dispatch:
         inputs:
@@ -13,7 +13,7 @@ on:
 
 
 jobs:
-    terraform_plan:
+    terraform_init:
         name: 'Terraform Plan'
         runs-on: ubuntu-latest
         
@@ -29,15 +29,8 @@ jobs:
             - name: 'Set up Cloud SDK'
               uses: 'google-github-actions/setup-gcloud@v1'
             
-            # - name: Setup GCP Service Account
-            #   uses: google-github-actions/setup-gcloud@v1
-            #   with:
-            #     version: 'latest'
-            #     service_account_email: ${{ secrets.GCP_SA_EMAIL }}
-            #     service_account_key: ${{ secrets.GCP_SA_KEY }}
-            #     export_default_credentials: true
-            # Generates an execution plan for Terraform
-            - name: Terraform Plan
+           
+            - name: Terraform Init
               continue-on-error: true
               run: |
                     
@@ -51,8 +44,11 @@ jobs:
                     chmod +x "${GITHUB_WORKSPACE}/.github/workflows/tf_plan_check.sh"
                     "${GITHUB_WORKSPACE}/.github/workflows/tf_plan_check.sh"
                     
-                    terraform workspace new ${{inputs.workspace-env }}
+                    terraform workspace select -or-create ${{inputs.workspace-env }}
               shell: bash
+            
+            
+                 
             
 
 

@@ -34,7 +34,10 @@ jobs:
             
             - name: 'Set up Cloud SDK'
               uses: 'google-github-actions/setup-gcloud@v1'
-            
+            - name: debug
+              run: |
+                 terraform -v
+              shell: bash
            
             - name: Terraform Init
               continue-on-error: true

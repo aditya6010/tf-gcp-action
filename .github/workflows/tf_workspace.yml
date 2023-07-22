@@ -97,6 +97,7 @@ jobs:
             # Provision resources via Terraform        
             - name: Terraform Apply
               run: |
+                terraform workspace select -or-create ${{inputs.workspace-env }}
                 chmod +x "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
                 "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
                 terraform show "tf_plan"

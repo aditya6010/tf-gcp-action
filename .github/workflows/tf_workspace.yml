@@ -68,7 +68,7 @@ jobs:
     terraform_apply:
         name: 'Terraform Apply'
         runs-on: ubuntu-latest
-        if:  inputs.apply_change == "true"
+        if:  inputs.apply_change == true
         needs: terraform_plan
         environment:
             name: ${{inputs.workspace-env}}

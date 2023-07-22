@@ -134,7 +134,7 @@ jobs:
                 chmod +x "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
                 "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
                 terraform workspace select -or-create ${{inputs.workspace-env }}
-                terraform destroy -var-file="${{inputs.workspace-env}}.tfvars" 
+                terraform destroy -auto-approve -var-file="${{inputs.workspace-env}}.tfvars" 
                  
             
 

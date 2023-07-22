@@ -74,7 +74,7 @@ jobs:
     terraform_apply:
         name: 'Terraform Apply'
         runs-on: ubuntu-latest
-        if:  inputs.apply_change == "apply"
+        if:  ${{ inputs.apply_change == "apply" }}
         needs: terraform_plan
         environment:
             name: ${{inputs.workspace-env}}
@@ -110,7 +110,7 @@ jobs:
     terraform_destroy:
         name: 'Terraform Destroy'
         runs-on: ubuntu-latest
-        if:  inputs.apply_change == "destroy"
+        if:  ${{ inputs.apply_change == "destroy" }}
         needs: terraform_plan
         environment:
             name: ${{inputs.workspace-env}}

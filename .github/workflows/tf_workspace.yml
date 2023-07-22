@@ -12,9 +12,12 @@ on:
                     - prod
                 default: dev
             apply_change:
-                description: "Select true if want to apply the change only"
-                type: boolean
-                default: false
+                description: "Select apply or destroy"
+                type: choice
+                options:
+                  - select apply/destroy
+                  - apply
+                  - destroy
                 
 
 
@@ -71,7 +74,7 @@ jobs:
     terraform_apply:
         name: 'Terraform Apply'
         runs-on: ubuntu-latest
-        if:  inputs.apply_change == true
+        if:  inputs.apply_change == "apply"
         needs: terraform_plan
         environment:
             name: ${{inputs.workspace-env}}
@@ -97,13 +100,41 @@ jobs:
             # Provision resources via Terraform        
             - name: Terraform Apply
               run: |
-                terraform workspace select -or-create ${{inputs.workspace-env }}
+                
                 chmod +x "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
                 "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
+                terraform workspace select -or-create ${{inputs.workspace-env }}
                 terraform show "tf_plan"
                 terraform apply "tf_plan"
 
-
+    terraform_destroy:
+        name: 'Terraform Destroy'
+        runs-on: ubuntu-latest
+        if:  inputs.apply_change == "destroy"
+        needs: terraform_plan
+        environment:
+            name: ${{inputs.workspace-env}}
+        
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+            
+            - id: 'auth'
+              uses: 'google-github-actions/auth@v1'
+              with:
+                credentials_json: '${{ secrets.GCP_SA_KEY }}'
+            
+            - name: 'Set up Cloud SDK'
+              uses: 'google-github-actions/setup-gcloud@v1'
+            
+            # Destroy resources via Terraform        
+            - name: Terraform Apply
+              run: |
+                
+                chmod +x "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
+                "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
+                terraform workspace select -or-create ${{inputs.workspace-env }}
+                terraform destroy -var-file="${{inputs.workspace-env}}.tfvars" 
                  
             
 
